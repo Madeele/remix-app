@@ -12,7 +12,7 @@ export const action = async ({request}) => {
     db.write();
 
 
-    return redirect('/posts/${uuid}');
+    return redirect(`/posts/${uuid}`);
 }
 
 function NewPost() {
