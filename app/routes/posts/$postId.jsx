@@ -1,3 +1,4 @@
+import { redirect } from 'remix';
 import {useLoaderData, Link} from 'remix';
 import createDb from '~/db/db.server';
 
@@ -11,6 +12,16 @@ export const loader = async function ({params}) {
     return {
         post,
     };
+}
+
+export const action = async function({request, params}) {
+    const form = await request.formData();
+    if(form.get('_method') === 'delete'){
+        const db = await createDb();
+        db.data.posts = db.data.posts.filter((p) => p.id !== params.postId);
+        db.write();
+        return redirect("/posts");
+    }
 }
 
 function Post() {
@@ -27,6 +38,12 @@ function Post() {
             </div>
             <div className="page-content">
                 {post.body}
+            </div>
+            <div className="page-footer">
+                <form method="POST">
+                    <input type="hidden" name="_method" value="delete" />
+                    <button className="btn btn-delete">Delete</button>
+                </form>
             </div>
         </div>
     )
